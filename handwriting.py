@@ -2,9 +2,13 @@ import lir
 import numpy as np
 import pandas as pd
 
-from utils import print_LR_per_category
+from utils import print_LR_per_category, return_file_path_and_download_data_if_not_present
 
-df = pd.read_excel('data/pnas.2119944119.sd02.xlsx')
+# download the data if not present
+url = "https://www.pnas.org/doi/suppl/10.1073/pnas.2119944119/suppl_file/pnas.2119944119.sd02.xlsx"
+file_name = return_file_path_and_download_data_if_not_present(url)
+
+df = pd.read_excel(file_name)
 
 # terminology; mated vs non-mated
 h1s = df[df['Mating'] == 'M']['Conclusion']
@@ -22,5 +26,4 @@ print_LR_per_category(LR_map)
 h1s = np.array(h1s.map(LR_map))
 h2s = np.array(h2s.map(LR_map))
 stats = lir.calculate_lr_statistics(h2s, h1s)
-print(stats.cllr)
-# 0.4
+print(stats.cllr)  # 0.4

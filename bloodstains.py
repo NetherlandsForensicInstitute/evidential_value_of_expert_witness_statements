@@ -1,9 +1,15 @@
+import os.path
+
 import lir
 import pandas as pd
 
-from utils import print_LR_per_category
+from utils import print_LR_per_category, return_file_path_and_download_data_if_not_present
 
-df = pd.read_excel('data/1-s2.0-S0379073821001766-mmc4.xlsx', sheet_name='Classes', dtype={'KnownCause': str})
+# download the data if not present
+url = "https://ars.els-cdn.com/content/image/1-s2.0-S0379073821001766-mmc4.xlsx"
+file_name = return_file_path_and_download_data_if_not_present(url)
+
+df = pd.read_excel(file_name, sheet_name='Classes', dtype={'KnownCause': str})
 # pandas sometimes has issues reading the column names
 df.columns = ['SampleID', 'SamplePnum', 'Prompt', 'KnownCause', 'MostCons', 'Responses', 'N(D)', 'N(I)', 'N(E)']
 
@@ -30,5 +36,4 @@ for kw in num_columns:
     h2_LRs += [LR_map[kw]] * h2s[kw].sum()
 
 stats = lir.calculate_lr_statistics(h2_LRs, h1_LRs)
-print(stats.cllr)
-# 0.77
+print(stats.cllr)  # 0.77
