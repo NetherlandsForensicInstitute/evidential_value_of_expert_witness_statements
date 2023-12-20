@@ -16,6 +16,11 @@ df.columns = ['SampleID', 'SamplePnum', 'Prompt', 'KnownCause', 'MostCons', 'Res
 h1s = df[df['KnownCause'].str.lower() == 'true']
 h2s = df[df['KnownCause'].str.lower() == 'false']
 
+# in this study the participants were given images of bloodstain patterns, and a possible classification.
+# They had to respond whether they agreed with that classification (definitive), disagreed (exclusion) or
+# could not reach a conclusion (included).
+# the xlsx gives the total number of judgements made that were:
+# N(D) definitive, N(E) exclusion and N(I) included
 num_columns = ['N(D)', 'N(I)', 'N(E)']
 
 tot_h2s = sum(h2s[kw].sum() for kw in num_columns)

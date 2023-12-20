@@ -1,3 +1,4 @@
 pandas
 lir==0.1.13
 openpyxl
+requests
