@@ -4,7 +4,7 @@
 import lir
 import numpy as np
 
-from utils import print_LR_per_category
+from utils import print_LR_per_category, get_list_of_conclusions, get_lr_map
 
 h1 = {'Exclusion': 161+450, 'Inconclusive': 2019+1856, 'Individualisation': 40+3663 }
 # check manual entering with total
@@ -18,17 +18,16 @@ h2_tot = 4985
 assert h2_tot == sum([int(val) for val in h2.values()])
 
 
-LR_map = {}
-h1s=[]
-h2s=[]
-for keyword in h2.keys():
-    LR_map[keyword] = h1[keyword]/h1_tot / (h2[keyword]/h2_tot)
-    h1s += [LR_map[keyword]] * h1[keyword]
-    h2s += [LR_map[keyword]] * h2[keyword]
+# reform the totals to list of conclusions so we can handle them like other studies
+h1_conclusions, h2_conclusions = get_list_of_conclusions(h1, h2)
+
+
+LR_map = get_lr_map(h1_conclusions, h2_conclusions, set(h1))
 print_LR_per_category(LR_map)
 # Exclusion: 1/10.61
 # Inconclusive: 2.29
 # Individualisation: 375.70
-stats = lir.calculate_lr_statistics(h2s, h1s)
+
+stats = lir.calculate_lr_statistics([LR_map[c] for c in h2_conclusions], [LR_map[c] for c in h1_conclusions])
 print(stats.cllr)
 # 0.49

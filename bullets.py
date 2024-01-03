@@ -1,6 +1,6 @@
 import lir
 
-from utils import print_LR_per_category
+from utils import print_LR_per_category, get_list_of_conclusions, get_lr_map
 
 h1 = {'ID': 1076,
       'Inconclusive-A': 127,
@@ -23,14 +23,10 @@ h2_tot = sum([int(val) for val in h2.values()])
 # check manual entering with total reported in paper
 assert h2_tot + h1_tot == 4320
 
-LR_map = {}
-h1s = []
-h2s = []
-for keyword in h2.keys():
-    LR_map[keyword] = h1[keyword] / h1_tot / (h2[keyword] / h2_tot)
-    h1s += [LR_map[keyword]] * h1[keyword]
-    h2s += [LR_map[keyword]] * h2[keyword]
+# reform the totals to list of conclusions so we can handle them like other studies
+h1_conclusions, h2_conclusions = get_list_of_conclusions(h1, h2)
 
+LR_map = get_lr_map(h1_conclusions, h2_conclusions, set(h1))
 print_LR_per_category(LR_map)
 # ID: 108.84
 # Inconclusive-A: 1/1.04
@@ -38,6 +34,7 @@ print_LR_per_category(LR_map)
 # Inconclusive-C: 1/10.23
 # Elimination: 1/11.59
 # Other: 1/1.01
-stats = lir.calculate_lr_statistics(h2s, h1s)
+
+stats = lir.calculate_lr_statistics([LR_map[c] for c in h2_conclusions], [LR_map[c] for c in h1_conclusions])
 print(stats.cllr)
 # 0.42
